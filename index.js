@@ -24,27 +24,28 @@ const db = mysql.createConnection(
 );
 
 // Present inital menu of actions for the user
-inquirer
-  .prompt([
-    {
-      type: "list",
-      name: "menu",
-      message: "What would you like to do?",
-      choices: [
-        "View All Employees",
-        "Add Employee",
-        "Update Employee Role",
-        "View All Roles",
-        "Add Role",
-        "View All Departments",
-        "Add Department",
-      ],
-    },
-  ])
-  .then((answers) => {
-    console.info(answers);
-  });
-
+function menu() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "menu",
+        message: "What would you like to do?",
+        choices: [
+          "View All Employees",
+          "Add Employee",
+          "Update Employee Role",
+          "View All Roles",
+          "Add Role",
+          "View All Departments",
+          "Add Department",
+        ],
+      },
+    ])
+    .then((answers) => {
+      menuActions(answers);
+    });
+}
 // Handle menu selection
 function menuActions(answers) {
   switch (answers.menu) {
@@ -81,6 +82,18 @@ function viewAllEmployees() {
       return;
     }
     console.table(rows);
-    return;
   });
+
+  menu();
+  return;
 }
+
+function addEmployee() {
+  const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`;
+}
+
+function init() {
+  menu();
+}
+
+init();
