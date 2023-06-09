@@ -91,10 +91,48 @@ function viewAllEmployees() {
   return;
 }
 
+// Update the employee's role based on their id
+async function updateEmployeeRole() {
+  let employees = await employeeChoices();
+  let roles = await roleChoices();
+  console.log("emp", employees);
+  console.log("roles", roles);
+  console.log("\n");
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "id",
+        message: "Which employee would you like to update?",
+        choices: employees,
+      },
+      {
+        type: "list",
+        name: "role_id",
+        message: "What is the employee's new role_id?",
+        choices: roles,
+      },
+    ])
+    .then((answers) => {
+      const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+      db.query(sql, [answers.role_id, answers.id], (err, rows) => {
+        if (err) {
+          res.status(500).json({ error: err.message });
+          return;
+        }
+        console.log("\n");
+        console.table(rows);
+        console.log("\n");
+        menu();
+      });
+    });
+}
+
 async function addEmployee() {
   // Get list of roles and managers for inquirer choices
-  const roles = await roleChoices();
-  const managers = await managerChoices();
+  let roles = await roleChoices();
+  let managers = await managerChoices();
+  console.log(managers);
 
   console.log("\n");
   await inquirer
@@ -147,42 +185,6 @@ async function addEmployee() {
     });
   menu();
 }
-
-// Update the employee's role based on their id
-async function updateEmployeeRole() {
-  const roles = await roleChoices();
-  const employees = await managerChoices();
-  console.log("\n");
-  await inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "employeeId",
-        message: "Which employee's role would you like to update?",
-        choices: employees,
-      },
-      {
-        type: "list",
-        name: "roleId",
-        message: "What is the employee's new role?",
-        choices: roles,
-      },
-    ])
-    .then((answers) => {
-      const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
-      db.query(sql, [answers.roleId, answers.employeeId], (err, rows) => {
-        if (err) {
-          res.status(500).json({ error: err.message });
-          return;
-        }
-        console.log("\n");
-        console.table(rows);
-        console.log("\n");
-        menu();
-      });
-    });
-}
-
 function viewAllDepartments() {
   const sql = `SELECT * FROM department`;
   db.query(sql, (err, rows) => {
@@ -246,8 +248,23 @@ function managerChoices() {
       managers.push(rows[i].id);
     }
   });
-
   return managers;
+}
+
+function employeeChoices() {
+  const sql = "SELECT id FROM employee ORDER BY id ASC";
+  const employees = [];
+  db.query(sql, (err, rows) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    for (let i = 0; i < rows.length; i++) {
+      employees.push(rows[i].id);
+    }
+  });
+  return employees;
 }
 
 // Provides list inquirer choices for roles
