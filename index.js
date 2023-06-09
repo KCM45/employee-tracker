@@ -152,7 +152,6 @@ async function addEmployee() {
 async function updateEmployeeRole() {
   const roles = await roleChoices();
   const employees = await managerChoices();
-  console.log(employees);
   console.log("\n");
   await inquirer
     .prompt([
@@ -217,6 +216,22 @@ function addDepartment() {
     });
 }
 
+// Provides list inquirer choices for departments
+function departmentChoices() {
+  const sql = `SELECT id FROM department ORDER BY id ASC`;
+  const departments = [];
+  db.query(sql, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    for (let i = 0; i < rows.length; i++) {
+      departments.push(rows[i].id);
+    }
+  });
+  return departments;
+}
+
 // Provides list inquirer choices for managers
 function managerChoices() {
   const sql = "SELECT id FROM employee ORDER BY id ASC";
@@ -231,6 +246,7 @@ function managerChoices() {
       managers.push(rows[i].id);
     }
   });
+
   return managers;
 }
 
@@ -249,12 +265,18 @@ function roleChoices() {
   });
   return roles;
 }
-function addRole() {
+async function addRole() {
+  const departments = await departmentChoices();
   inquirer
     .prompt([
       { type: "input", name: "title", message: "Role title?" },
       { type: "input", name: "salary", message: "Role salary?" },
-      { type: "input", name: "department_id", message: "Department id?" },
+      {
+        type: "list",
+        name: "department_id",
+        message: "Department id?",
+        choices: departments,
+      },
     ])
     .then((answers) => {
       const sql = `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`;
