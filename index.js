@@ -152,6 +152,7 @@ async function addEmployee() {
 async function updateEmployeeRole() {
   const roles = await roleChoices();
   const employees = await managerChoices();
+  console.log(employees);
   console.log("\n");
   await inquirer
     .prompt([
@@ -217,7 +218,7 @@ function addDepartment() {
 }
 
 // Provides list inquirer choices for managers
-async function managerChoices() {
+function managerChoices() {
   const sql = "SELECT id FROM employee ORDER BY id ASC";
   const managers = [];
   db.query(sql, (err, rows) => {
@@ -230,7 +231,7 @@ async function managerChoices() {
       managers.push(rows[i].id);
     }
   });
-  return await managers;
+  return managers;
 }
 
 // Provides list inquirer choices for roles
