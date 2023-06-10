@@ -219,67 +219,46 @@ function addDepartment() {
 }
 
 // Provides list inquirer choices for departments
-function departmentChoices() {
-  const sql = `SELECT id FROM department ORDER BY id ASC`;
-  const departments = [];
-  db.query(sql, (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    for (let i = 0; i < rows.length; i++) {
-      departments.push(rows[i].id);
-    }
-  });
+async function departmentChoices() {
+  let departments = [];
+  let rows = await db
+    .promise()
+    .query("SELECT id FROM department ORDER BY id ASC");
+  for (let i = 0; i < rows[0].length; i++) {
+    departments.push(rows[0][i].id);
+  }
   return departments;
 }
-
 // Provides list inquirer choices for managers
-function managerChoices() {
-  const sql = "SELECT id FROM employee ORDER BY id ASC";
-  const managers = [];
-  db.query(sql, (err, rows) => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    for (let i = 0; i < rows.length; i++) {
-      managers.push(rows[i].id);
-    }
-  });
+async function managerChoices() {
+  let managers = [];
+  let rows = await db
+    .promise()
+    .query("SELECT id FROM employee ORDER BY id ASC");
+  for (let i = 0; i < rows[0].length; i++) {
+    managers.push(rows[0][i].id);
+  }
   return managers;
 }
 
-function employeeChoices() {
-  const sql = "SELECT id FROM employee ORDER BY id ASC";
-  const employees = [];
-  db.query(sql, (err, rows) => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    for (let i = 0; i < rows.length; i++) {
-      employees.push(rows[i].id);
-    }
-  });
+async function employeeChoices() {
+  let employees = [];
+  let rows = await db
+    .promise()
+    .query("SELECT id FROM employee ORDER BY id ASC");
+  for (let i = 0; i < rows[0].length; i++) {
+    employees.push(rows[0][i].id);
+  }
   return employees;
 }
 
 // Provides list inquirer choices for roles
-function roleChoices() {
-  const sql = `SELECT id FROM role ORDER BY id ASC`;
-  const roles = [];
-  db.query(sql, (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    for (let i = 0; i < rows.length; i++) {
-      roles.push(rows[i].id);
-    }
-  });
+async function roleChoices() {
+  let roles = [];
+  let rows = await db.promise().query("SELECT id FROM role ORDER BY id ASC");
+  for (let i = 0; i < rows[0].length; i++) {
+    roles.push(rows[0][i].id);
+  }
   return roles;
 }
 async function addRole() {
