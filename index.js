@@ -178,7 +178,6 @@ async function addEmployee() {
           console.log("\n");
           console.table(rows);
           console.log("\n");
-          menu();
         }
       );
     });
