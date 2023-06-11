@@ -132,7 +132,6 @@ async function addEmployee() {
   // Get list of roles and managers for inquirer choices
   let roles = await roleChoices();
   let managers = await managerChoices();
-  console.log(managers);
 
   console.log("\n");
   await inquirer
